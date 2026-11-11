@@ -1,0 +1,253 @@
+@import "tailwindcss";
+
+/* Oscuro premium: negro profundo, tarjetas casi del mismo negro con borde fino, texto blanco roto y el dorado
+   de la pajarita de Duro como único acento. Siempre oscuro, sin depender del ajuste del sistema. */
+:root {
+  color-scheme: dark;
+  --bg: #0a0a0b;
+  --surface: #111113;
+  --surface-2: #18181b;
+  --line: #1f1f23;
+  --text: #f4f4f5;
+  --muted: #8b8b93;
+  --faint: #5a5a62;
+  --accent: #d4a94f;
+  --accent-ink: #1a1408;
+  --gain: #3fbf7f;
+  --loss: #ef6b6b;
+  --warn: #e0a63a;
+  --duro: #f2a7b5;
+  --kind-cash: #6b6b73;
+  --kind-savings: #b8943f;
+  --kind-fund: #8f7ad6;
+  --kind-crypto: #d98a3d;
+  --kind-stock: #4fb3a9;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-gain: var(--gain);
+  --color-loss: var(--loss);
+  --color-warn: var(--warn);
+  --color-surface-2: var(--surface-2);
+  --color-faint: var(--faint);
+  --color-accent-ink: var(--accent-ink);
+  --color-duro: var(--duro);
+  --radius-card: 20px;
+  --radius-control: 14px;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* Movimiento: una sola curva suave para toda la app, solo transform y opacity. */
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-fade-in: fade-in 240ms var(--ease-soft) backwards;
+  --animate-rise: rise 420ms var(--ease-soft) backwards;
+  --animate-grow: grow 700ms var(--ease-soft) backwards;
+}
+
+@keyframes fade-in { from { opacity: 0; } }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+@keyframes grow { from { transform: scaleX(0); } }
+
+/*
+ * Duro vivo: cuatro caras (public/duro) apiladas; cada ánimo enciende una y mueve el cuerpo.
+ * Reposo: respira y parpadea (la cara de ojos cerrados asoma un instante). Pensando: se balancea
+ * y le cae una moneda. Hablando: rebota. Celebrando: salta entre destellos. Preocupado: tiembla y suda.
+ * Durmiendo: respira lento con una zeta. Guiño: un saltito.
+ */
+@keyframes duro-breathe { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-3%) scale(1.035, 0.975); } }
+@keyframes duro-think { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } }
+@keyframes duro-blink { 0%, 94%, 100% { opacity: 0; } 95%, 97.5% { opacity: 1; } }
+@keyframes duro-talk { 0%, 100% { transform: translateY(0) scale(1, 1); } 50% { transform: translateY(-4%) scale(0.97, 1.04); } }
+@keyframes duro-jump {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  15% { transform: translateY(0) scale(1.12, 0.86); }
+  45% { transform: translateY(-22%) scale(0.94, 1.08) rotate(-4deg); }
+  70% { transform: translateY(0) scale(1.08, 0.92); }
+  85% { transform: translateY(-4%) scale(1, 1); }
+}
+@keyframes duro-shake { 0%, 100% { transform: translateX(0) rotate(0); } 20% { transform: translateX(-5%) rotate(-5deg); } 40% { transform: translateX(5%) rotate(5deg); } 60% { transform: translateX(-3%) rotate(-3deg); } 80% { transform: translateX(3%) rotate(3deg); } }
+@keyframes duro-sleep { 0%, 100% { transform: translateY(2%) scale(1, 0.97) rotate(-6deg); } 50% { transform: translateY(0) scale(1.03, 1) rotate(-6deg); } }
+@keyframes duro-hop { 0%, 100% { transform: translateY(0) rotate(0); } 35% { transform: translateY(-12%) rotate(6deg); } 65% { transform: translateY(0) rotate(-2deg) scale(1.06, 0.94); } }
+@keyframes duro-coin {
+  0% { transform: translate(-50%, -140%) rotateY(0); opacity: 0; }
+  20% { opacity: 1; }
+  75% { opacity: 1; }
+  100% { transform: translate(-50%, 40%) rotateY(540deg); opacity: 0; }
+}
+@keyframes duro-spark { 0% { transform: translate(0, 0) scale(0.3) rotateY(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translate(var(--sx), var(--sy)) scale(1) rotateY(720deg); opacity: 0; } }
+@keyframes duro-sweat { 0% { transform: translateY(0) scale(0.6); opacity: 0; } 25% { opacity: 1; transform: translateY(0) scale(1); } 100% { transform: translateY(160%) scale(1); opacity: 0; } }
+@keyframes duro-z { 0% { transform: translate(0, 0) scale(0.6); opacity: 0; } 30% { opacity: 1; } 100% { transform: translate(60%, -120%) scale(1.15); opacity: 0; } }
+
+.duro { position: relative; display: inline-block; flex-shrink: 0; perspective: 320px; }
+.duro-look {
+  position: relative; display: block; width: 100%; height: 100%;
+  --look-x: 0; --look-y: 0;
+  /* Muelle: sigue al puntero con un leve rebote al llegar. */
+  transform: rotateY(calc(var(--look-x) * 18deg)) rotateX(calc(var(--look-y) * -12deg)) translate(calc(var(--look-x) * 5%), calc(var(--look-y) * 4%));
+  transition: transform 700ms cubic-bezier(0.22, 1.4, 0.36, 1);
+}
+.duro-body { position: relative; display: block; width: 100%; height: 100%; transform-origin: 50% 92%; }
+.duro-face { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity 90ms linear; }
+.duro-face[data-on] { opacity: 1; }
+.duro[data-mood='idle'] .duro-body { animation: duro-breathe 3.6s ease-in-out infinite; }
+.duro[data-mood='idle'] .duro-face[data-face='calm'] { animation: duro-blink 5.2s linear infinite; }
+.duro[data-mood='thinking'] .duro-body { animation: duro-think 1s ease-in-out infinite; }
+.duro[data-mood='talking'] .duro-body { animation: duro-talk 0.34s ease-in-out infinite; }
+.duro[data-mood='celebrating'] .duro-body { animation: duro-jump 0.75s ease-out 3; }
+.duro[data-mood='worried'] .duro-body { animation: duro-shake 0.5s ease-in-out 3; }
+.duro[data-mood='sleeping'] .duro-body { animation: duro-sleep 4.8s ease-in-out infinite; }
+.duro[data-mood='wink'] .duro-body { animation: duro-hop 0.55s ease-out; }
+/* Vídeo con IA: lienzo 1,25x con margen para que el movimiento no se corte; con él cargado, la cara fija y el CSS se apartan. */
+.duro-anim { position: absolute; left: -12.5%; top: -12.5%; width: 125%; height: 125%; max-width: none; opacity: 0; transition: opacity 160ms linear; pointer-events: none; }
+.duro-anim[data-on] { opacity: 1; }
+.duro-anim[data-clip] { transition: none; }
+/* Con vídeo, la cara fija desaparece del todo (también su parpadeo CSS, que asomaba por los bordes). */
+.duro[data-anim]:not([data-mood='idle']) .duro-body { animation: none; }
+.duro[data-anim][data-mood] .duro-face[data-face] { opacity: 0; animation: none; transition-delay: 160ms; }
+.duro-coin, .duro-spark {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle at 35% 30%, #f4dc9a, var(--accent) 60%, #8a6a23);
+}
+.duro-coin { left: 50%; top: 0; width: 26%; height: 26%; animation: duro-coin 1s ease-in infinite; }
+.duro-spark { left: 40%; top: 30%; width: 20%; height: 20%; animation: duro-spark 0.9s ease-out infinite; }
+.duro-spark-1 { --sx: -110%; --sy: -170%; }
+.duro-spark-2 { --sx: 120%; --sy: -190%; animation-delay: 0.25s; }
+.duro-spark-3 { --sx: 10%; --sy: -260%; animation-delay: 0.5s; }
+.duro-sweat {
+  position: absolute; right: 14%; top: 24%; width: 13%; height: 17%; pointer-events: none;
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%; background: linear-gradient(#bfe6ff, #6fb8f0);
+  animation: duro-sweat 1.1s ease-in infinite;
+}
+.duro-z {
+  position: absolute; right: -4%; top: -6%; font-weight: 700; line-height: 1;
+  color: var(--muted); pointer-events: none; animation: duro-z 2.4s ease-out infinite;
+}
+
+/* Las cinco medidas de texto de la app. Ninguna pantalla usa otras. */
+@utility text-hero { font-size: 40px; line-height: 44px; letter-spacing: -0.03em; font-weight: 300; }
+@utility text-title { font-size: 24px; line-height: 30px; letter-spacing: -0.02em; font-weight: 600; }
+@utility text-heading { font-size: 17px; line-height: 24px; font-weight: 600; }
+@utility text-body { font-size: 15px; line-height: 22px; }
+@utility text-small { font-size: 13px; line-height: 18px; }
+
+/* Entrada de cada pantalla: sus bloques aparecen uno tras otro, 50 ms entre cada uno. */
+.stagger > :not(dialog) { animation: var(--animate-rise); }
+.stagger > :nth-child(2) { animation-delay: 50ms; }
+.stagger > :nth-child(3) { animation-delay: 100ms; }
+.stagger > :nth-child(4) { animation-delay: 150ms; }
+.stagger > :nth-child(5) { animation-delay: 200ms; }
+.stagger > :nth-child(n + 6) { animation-delay: 250ms; }
+
+/* Respuesta al toque: todo lo pulsable se hunde un poco y vuelve con suavidad. */
+@layer base {
+  a, button, summary, [role='switch'] {
+    transition-property: color, background-color, opacity, transform;
+    transition-duration: 200ms;
+    transition-timing-function: var(--ease-soft);
+  }
+  button:not(:disabled):active, a:active { transform: scale(0.98); }
+}
+
+/* Con una hoja abierta, lo de detrás no se mueve. */
+html:has(dialog[open]) { overflow: hidden; }
+dialog.sheet { overscroll-behavior: contain; }
+
+/* Hojas (<dialog>): suben desde abajo en el móvil y aparecen con un leve zoom en escritorio. */
+dialog.sheet {
+  transition: transform 380ms var(--ease-soft), opacity 280ms var(--ease-soft),
+    overlay 380ms allow-discrete, display 380ms allow-discrete;
+  transform: translateY(100%);
+}
+dialog.sheet[open] { transform: none; }
+@starting-style { dialog.sheet[open] { transform: translateY(100%); } }
+dialog.sheet::backdrop {
+  background: rgb(0 0 0 / 0);
+  transition: background-color 300ms var(--ease-soft), overlay 380ms allow-discrete, display 380ms allow-discrete;
+}
+dialog.sheet[open]::backdrop { background: rgb(0 0 0 / 0.4); }
+@starting-style { dialog.sheet[open]::backdrop { background: rgb(0 0 0 / 0); } }
+@media (min-width: 1024px) {
+  dialog.sheet { transform: scale(0.97); opacity: 0; }
+  dialog.sheet[open] { transform: none; opacity: 1; }
+  @starting-style { dialog.sheet[open] { transform: scale(0.97); opacity: 0; } }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after, ::backdrop {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+  }
+  /* Las animaciones en bucle de Duro parpadearían a 1 ms: mejor quieto. */
+  .duro-body, .duro-face, .duro-coin, .duro-spark, .duro-sweat, .duro-z { animation: none !important; }
+  .duro-coin, .duro-spark, .duro-sweat, .duro-z, .duro-anim { display: none; }
+  .duro[data-anim][data-mood] .duro-face[data-face][data-on] { opacity: 1; }
+  .duro-look { transition: none; }
+}
+
+html, body { background: var(--bg); color: var(--text); overflow-x: clip; font-size: 15px; line-height: 22px; }
+body { -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
+
+/* En la capa base para que las utilidades (text-5xl…) puedan sobrescribirlo */
+@layer base {
+  input, select, textarea { font-size: 16px; }
+  /* En iOS el campo de fecha tiene un ancho mínimo propio y se sale de su columna. */
+  input[type='date'] { min-width: 0; -webkit-appearance: none; appearance: none; }
+  input[type='date']::-webkit-date-and-time-value { text-align: left; }
+}
+
+.num { font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+
+/* Modo privado: tapa las cifras con una barra lisa (no los campos donde escribes) y quita las de los gráficos. */
+html[data-private] .num:not(input) {
+  color: transparent !important;
+  background: color-mix(in srgb, var(--muted) 22%, transparent);
+  border-radius: 0.35em;
+  width: fit-content;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  user-select: none;
+}
+html[data-private] .num:not(input) * { color: transparent !important; background: none; }
+html[data-private] .recharts-cartesian-axis-tick-value { fill: transparent; }
+html[data-private] .recharts-tooltip-wrapper { visibility: hidden; }
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+.pt-safe { padding-top: env(safe-area-inset-top); }
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Tutorial (driver.js) con los colores de la app, también en oscuro. */
+.driver-popover.finanzas-tour {
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 20px;
+  padding: 18px;
+  max-width: 320px;
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 40px rgb(0 0 0 / 0.5);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+.driver-popover.finanzas-tour .driver-popover-title { font-size: 16px; font-weight: 600; }
+.driver-popover.finanzas-tour .driver-popover-description { color: var(--muted); font-size: 14px; line-height: 1.45; }
+.driver-popover.finanzas-tour .driver-popover-progress-text { color: var(--muted); }
+.driver-popover.finanzas-tour .driver-popover-close-btn { color: var(--muted); }
+.driver-popover.finanzas-tour .driver-popover-footer button {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 0;
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 13px;
+  text-shadow: none;
+}
+.driver-popover.finanzas-tour .driver-popover-footer .driver-popover-next-btn { background: var(--accent); color: var(--accent-ink); }
+.driver-popover.finanzas-tour .driver-popover-arrow { border-color: var(--surface); }
+.driver-popover.finanzas-tour .driver-popover-arrow-side-left { border-right-color: transparent; border-top-color: transparent; border-bottom-color: transparent; }
+.driver-popover.finanzas-tour .driver-popover-arrow-side-right { border-left-color: transparent; border-top-color: transparent; border-bottom-color: transparent; }
+.driver-popover.finanzas-tour .driver-popover-arrow-side-top { border-left-color: transparent; border-right-color: transparent; border-bottom-color: transparent; }
+.driver-popover.finanzas-tour .driver-popover-arrow-side-bottom { border-left-color: transparent; border-right-color: transparent; border-top-color: transparent; }
